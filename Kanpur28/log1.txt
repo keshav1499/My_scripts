@@ -1,0 +1,10 @@
+This is the 1st log 
+I learned to implement configurations of a mangohud install based on flatpak
+The below text helped:
+
+"Oh this could be easily confusing but it's not to hard. Just copy your ~/.config/mangohud folder into steams flatpak folder under .config and it should work fine ~/.var/app/com.valvesoftware.Steam/.config/
+
+Each flatpak has it's own .config and .local as they are isolated from the rest of the system. This is how I have mine set up and it works flawlessly."
+This is enough to undesrtand
+
+
