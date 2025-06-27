@@ -1,0 +1,13 @@
+[Unit]
+Description=NoteBook FanControl Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/nbfc start
+ExecStop=/usr/bin/nbfc stop
+Restart=on-failure
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
