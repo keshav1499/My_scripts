@@ -7,4 +7,33 @@ The below text helped:
 Each flatpak has it's own .config and .local as they are isolated from the rest of the system. This is how I have mine set up and it works flawlessly."
 This is enough to undesrtand
 
+for nbfc linux
+copy copr libraries
+sudo dng install nbc-linux
+implement xiaomi mi book json script
 
+Build and edit the file /etc/systemd/system/nbfc.service
+
+sudo nano /etc/systemd/system/nbfc.service
+
+make the file look like below
+
+[Unit]
+Description=NoteBook FanControl Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/nbfc start
+ExecStop=/usr/bin/nbfc stop
+Restart=on-failure
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+reload and retest
+
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable nbfc.service
