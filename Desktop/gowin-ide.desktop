@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Gowin FPGA IDE
+Comment=Launch Gowin FPGA IDE
+Exec=/home/tallguydesi/Documents/Gowin_V1.9.11.01_Education_Linux/IDE/run.sh
+Path=/home/tallguydesi/Documents/Gowin_V1.9.11.01_Education_Linux/IDE
+Icon=/home/tallguydesi/Documents/Gowin_V1.9.11.01_Education_Linux/IDE/GOWIN.png
+Terminal=false
+Categories=Development;Electronics;FPGA;
+StartupNotify=true

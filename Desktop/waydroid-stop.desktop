@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Waydroid Stop
+Exec=waydroid session stop
+Icon=/usr/lib/waydroid/data/AppIcon.png

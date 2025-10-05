@@ -1,0 +1,5 @@
+Step 1: Disable Secure boot
+Step 2: Install acpi_ec with "sudo ./install.sh" , the script is there in the git repo
+Step 3: re enable secure boot
+Step 4: "sudo mokutil --import /var/lib/dkms/mok.pub" - This will enroll the public key into your kernel as a trusted module
+Step 5: Reboot

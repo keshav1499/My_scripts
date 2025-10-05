@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=RDR2
+Exec=/usr/bin/faugus-run --game rdr2
+Icon=/home/tallguydesi/.config/faugus-launcher/icons/rdr2.ico
+Type=Application
+Categories=Game;
+Path=/run/media/tallguydesi/Meow/Games/RED_DEAD_2/Red Dead Redemption 2 (2018-2019)/Red Dead Redemption 2

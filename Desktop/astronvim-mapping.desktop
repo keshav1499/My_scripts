@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=astronvim mapping
+Comment=AstroNvim Key Mappings Web App
+Exec=brave-browser --app=https://docs.astronvim.com/mappings/
+Icon=~/Pictures/Astronvim.jpeg
+Type=Application
+Categories=Utility;Development;WebApp;
+StartupWMClass=astronvim-mapping
+

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Add Public DNS Servers
+Comment=Adds 1.1.1.1 and 8.8.8.8 to resolv.conf
+Exec=sh -c "echo 'nameserver 1.1.1.1' | sudo tee -a /etc/resolv.conf && echo 'nameserver 8.8.8.8' | sudo tee -a /etc/resolv.conf && echo 'nameserver 9.9.9.9' | sudo tee -a /etc/resolv.conf"
+Icon=network-wired
+Terminal=true
+Type=Application
+Categories=System;Network;

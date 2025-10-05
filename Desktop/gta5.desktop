@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=GTA5
+Exec=/usr/bin/faugus-run --game gta5
+Icon=/home/tallguydesi/.config/faugus-launcher/icons/gta5.ico
+Type=Application
+Categories=Game;
+Path=/run/media/tallguydesi/Entertainment/Games/Grand Theft Auto V
