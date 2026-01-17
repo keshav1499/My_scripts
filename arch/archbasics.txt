@@ -1,0 +1,1 @@
+echo $XDG_DATA_DIRS -> This will give you the directories xdg looks into while searching for apps and stuff 
