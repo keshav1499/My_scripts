@@ -1,0 +1,9 @@
+
+[Desktop Entry]
+Name=Youtube
+Comment=Youtube web app
+Exec=brave-browser --app=https://web.whatsapp.com/
+Icon=~/Pictures/YTLogo.png
+Type=Application
+Categories=Utility;Development;WebApp;
+StartupWMClass=youtube-startup
