@@ -1,0 +1,86 @@
+nbfc sensors list
+acpitz:
+	/sys/class/hwmon/hwmon1/temp1_input
+nvme:
+	/sys/class/hwmon/hwmon3/temp1_input
+	/sys/class/hwmon/hwmon4/temp1_input
+	/sys/class/hwmon/hwmon4/temp2_input
+amdgpu:
+	/sys/class/hwmon/hwmon5/temp1_input
+	/sys/class/hwmon/hwmon5/temp2_input
+	/sys/class/hwmon/hwmon5/temp3_input
+	/sys/class/hwmon/hwmon6/temp1_input
+k10temp:
+	/sys/class/hwmon/hwmon7/temp1_input
+alienware_wmi:
+	/sys/class/hwmon/hwmon8/temp1_input
+	/sys/class/hwmon/hwmon8/temp2_input
+dell_smm:
+	/sys/class/hwmon/hwmon9/temp1_input
+	/sys/class/hwmon/hwmon9/temp2_input
+	/sys/class/hwmon/hwmon9/temp3_input
+	/sys/class/hwmon/hwmon9/temp4_input
+	/sys/class/hwmon/hwmon9/temp5_input
+
+ Fri  7 Nov - 21:57  ~ 
+ @tallguydesi  nbfc sensors show
+#0 (small):
+  Sensors:   @CPU (default)
+  Algorithm: Average (default)
+
+#1 (big):
+  Sensors:   @CPU (default)
+  Algorithm: Average (default)
+
+
+ Fri  7 Nov - 21:57  ~ 
+ @tallguydesi  nbfc status      
+Read-only                : false
+Selected Config Name     : Xiaomi Mi Book (TM1613, TM1703)
+
+Fan Display Name         : small
+Temperature              : 50.25
+Auto Control Enabled     : true
+Critical Mode Enabled    : false
+Current Fan Speed        : -0.00
+Target Fan Speed         : 0.00
+Requested Fan Speed      : 0.00
+Fan Speed Steps          : 215
+
+Fan Display Name         : big
+Temperature              : 50.25
+Auto Control Enabled     : true
+Critical Mode Enabled    : false
+Current Fan Speed        : -0.00
+Target Fan Speed         : 0.00
+Requested Fan Speed      : 0.00
+Fan Speed Steps          : 215
+
+
+Both big and small(cpu and gpu) are using k10temp, which doesn't seem accurate while gaming, help me set, below is documentation
+
+Specyfing Temperature Sources
+
+nbfc sensors list will output all available sensors
+
+nbfc sensors show will show all available fans and their configured sensors
+
+sudo nbfc sensors set -f <FAN_INDEX> [-s <SENSOR>...] [-a <ALGORITHM>] will set the specified sensors and the algorithm for a fan.
+
+Examples
+
+sudo nbfc sensors set -f 0 -s coretemp -a Min
+
+Fan 0 uses the "Min" algorithm with all sensors named "coretemp".
+
+sudo nbfc sensors set -f 0 -s /sys/class/hwmon/hwmon4/temp1_input -s /sys/class/hwmon/hwmon4/temp2_input
+
+Fan 0 uses the default algorithm with the specific sensor file paths.
+
+sudo nbfc sensors set -f 0 -s '$ echo 42'
+
+Fan 0 uses the output of echo 42 as temperature
+
+sudo nbfc sensors set -f 1 -s @GPU
+
+Fan 1 uses all sensors in the @GPU group ("amdgpu", "nvidia", "nouveau", "radeon")
