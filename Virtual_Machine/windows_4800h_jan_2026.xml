@@ -1,0 +1,167 @@
+
+<domain xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0" type="kvm">
+  <name>win11</name>
+  <uuid>1ff14e30-dbe8-4fcb-8699-3bf197043a9b</uuid>
+  <metadata>
+    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+      <libosinfo:os id="http://microsoft.com/win/11"/>
+    </libosinfo:libosinfo>
+  </metadata>
+  <memory unit="KiB">4194304</memory>
+  <currentMemory unit="KiB">4194304</currentMemory>
+  <vcpu placement="static">4</vcpu>
+  <sysinfo type="smbios">
+    <bios>
+      <entry name="vendor">Dell Inc.</entry>
+      <entry name="version">1.10.0</entry>
+    </bios>
+    <system>
+      <entry name="manufacturer">Dell Inc.</entry>
+      <entry name="product">G5 5505</entry>
+      <entry name="version">A00</entry>
+      <entry name="serial">7X8Y9Z1</entry>
+      <entry name="uuid">1ff14e30-dbe8-4fcb-8699-3bf197043a9b</entry>
+      <entry name="sku">09B3</entry>
+      <entry name="family">G Series</entry>
+    </system>
+    <baseBoard>
+      <entry name="manufacturer">Dell Inc.</entry>
+      <entry name="product">0G9GRG</entry>
+      <entry name="version">A00</entry>
+      <entry name="serial">/7X8Y9Z1/CN123456789012/</entry>
+    </baseBoard>
+  </sysinfo>
+  <os firmware="efi">
+    <type arch="x86_64" machine="pc-q35-10.1">hvm</type>
+    <firmware>
+      <feature enabled="no" name="enrolled-keys"/>
+      <feature enabled="yes" name="secure-boot"/>
+    </firmware>
+    <loader readonly="yes" secure="yes" type="pflash" format="raw">/usr/share/edk2/x64/OVMF_CODE.secboot.4m.fd</loader>
+    <nvram template="/usr/share/edk2/x64/OVMF_VARS.4m.fd" templateFormat="raw" format="raw">/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
+    <boot dev="hd"/>
+    <smbios mode="sysinfo"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv mode="custom">
+      <relaxed state="on"/>
+      <vapic state="on"/>
+      <spinlocks state="on" retries="8191"/>
+      <vendor_id state="on" value="AuthenticAMD"/>
+    </hyperv>
+    <kvm>
+      <hidden state="on"/>
+    </kvm>
+    <vmport state="off"/>
+    <smm state="on"/>
+    <ioapic driver="kvm"/>
+  </features>
+  <cpu mode="host-passthrough" check="none" migratable="on">
+    <topology sockets="1" dies="1" clusters="1" cores="2" threads="2"/>
+    <feature policy="disable" name="hypervisor"/>
+    <feature policy="require" name="topoext"/>
+  </cpu>
+  <clock offset="localtime">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+    <timer name="hypervclock" present="yes"/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2"/>
+      <source file="/run/media/tallguydesi/Entertainment/Virtual_Machines/Windows/win11"/>
+      <target dev="sda" bus="sata"/>
+      <address type="drive" controller="0" bus="0" target="0" unit="0"/>
+    </disk>
+    <controller type="usb" index="0" model="qemu-xhci">
+      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
+    </controller>
+    <controller type="sata" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1f" function="0x2"/>
+    </controller>
+    <controller type="pci" index="0" model="pcie-root"/>
+    <controller type="pci" index="1" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="1" port="0x8"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0" multifunction="on"/>
+    </controller>
+    <controller type="pci" index="2" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="2" port="0x9"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x1"/>
+    </controller>
+    <controller type="pci" index="3" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="3" port="0xa"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x2"/>
+    </controller>
+    <controller type="pci" index="4" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="4" port="0xb"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x3"/>
+    </controller>
+    <controller type="pci" index="5" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="5" port="0xc"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x4"/>
+    </controller>
+    <controller type="virtio-serial" index="0">
+      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
+    </controller>
+    <interface type="network">
+      <mac address="52:54:00:20:8f:23"/>
+      <source network="default"/>
+      <model type="e1000e"/>
+      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+    </interface>
+    <channel type="spicevmc">
+      <target type="virtio" name="com.redhat.spice.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="1"/>
+    </channel>
+    <input type="tablet" bus="usb">
+      <address type="usb" bus="0" port="1"/>
+    </input>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
+    <graphics type="spice">
+      <listen type="none"/>
+      <image compression="off"/>
+      <gl enable="yes" rendernode="/dev/dri/by-path/pci-0000:08:00.0-render"/>
+    </graphics>
+    <sound model="ich9">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1b" function="0x0"/>
+    </sound>
+    <audio id="1" type="spice"/>
+    <video>
+      <model type="virtio" heads="1" primary="yes">
+        <acceleration accel3d="yes"/>
+      </model>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
+    </video>
+    <watchdog model="itco" action="reset"/>
+    <memballoon model="none"/>
+  </devices>
+  <qemu:commandline>
+    <qemu:arg value="-cpu"/>
+    <qemu:arg value="host,vendor=AuthenticAMD,family=23,model=96,stepping=1,model_id=AMD Ryzen 7 4800H with Radeon Graphics,hv_relaxed,hv_vapic,hv_spinlocks=0x1fff,hv_vpindex,hv_synic,hv_stimer,hv_time,hv_frequencies,hv_tlbflush,hv_ipi,+topoext,hypervisor=off,host-phys-bits=true"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=0,vendor=Dell Inc.,version=1.10.0,date=06/15/2021"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=1,manufacturer=Dell Inc.,product=G5 5505,version=A00,serial=9XJ3B13,uuid=5d3e4e5f-6a7b-8c9d-0e1f-2a3b4c5d6e7f"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=2,manufacturer=Dell Inc.,product=046C9Y,version=A00,serial=/9XJ3B13/CN123456789012/"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=3,manufacturer=Dell Inc.,version=A00,serial=9XJ3B13"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=4,manufacturer=AuthenticAMD,max-speed=2900,current-speed=2900,sock_pfx=FP6"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=17,manufacturer=SK Hynix,loc_pfx=SODIMM,speed=3200,serial=85000000,part=HMA81GS6DJR8N-XN"/>
+  </qemu:commandline>
+</domain>

@@ -1,0 +1,4 @@
+sudo dnf install fedora-repos-archive
+The above enables all the archives that will help you installa nything old
+sudo dnf install kernel-devel-$(uname -r)
+The above installed kernel devel packages easily once I executed the first command

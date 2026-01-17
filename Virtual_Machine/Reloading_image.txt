@@ -1,0 +1,7 @@
+you can add execute permissions to directories by typing chmod +x <directory name>. you'll have to do it as root. if your directory is /var/libvirt/images, you need to run that command for /var, /var/libvirt, and /var/libvirt/images.
+
+in order to see if a directory is in the right group, run ls -la <directory> and look for the dot right above the two dots. it should say the owner and group is libvirt. if it's root or something else, change it to libvirt by running sudo chown libvirt:libvirt <directory>
+
+you'll only have to do this for the last directory, and not every directory in the path. i.e. only /var/libvirt/images if that's what you're going for as per OP's example.
+
+I hope that clears stuff up
