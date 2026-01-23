@@ -188,9 +188,9 @@
                 <span class="tile-icon">🐦</span>
                 <span class="tile-name">X</span>
             </a>
-            <a href="https://netflix.com" class="tile">
-                <span class="tile-icon">🍿</span>
-                <span class="tile-name">Netflix</span>
+            <a href="https://mail.zoho.in/zm/#mail/folder/inbox" class="tile">
+                <span class="tile-icon">📨</span>
+                <span class="tile-name">Zoho-Mail</span>
             </a>
         </div>
     </div>
@@ -298,8 +298,14 @@
 
     function resetParticle(i, initial = false) {
         const index = i * DATA_STRIDE;
-        const spread = 400; 
-        particlesData[index] = (width / 2) + (Math.random() * spread - spread / 2);
+        const spread = 300; 
+        //particlesData[index] = (width / 5) + (Math.random() * spread - spread / 2);
+        
+        if (Math.random() < 0.5) {
+          particlesData[index] = (width / 5) + (Math.random() * spread - spread / 2);
+        } else {
+          particlesData[index] = (width * 4 / 5) + (Math.random() * spread - spread / 2);
+        }
         particlesData[index + 1] = height + Math.random() * 50; 
         if (initial) {
             particlesData[index + 1] -= Math.random() * height * 0.6;
@@ -329,8 +335,8 @@
     });
 
     function animate() {
-        mouse.vx *= 0.1;
-        mouse.vy *= 0.1;
+        mouse.vx *= 0.5;
+        mouse.vy *= 0.5;
         
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const idx = i * DATA_STRIDE;
