@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Tab</title>
+    <style>
+        /* --- CORE STYLES --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- FIRE CANVAS (Background) --- */
+        #glCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            display: block;
+        }
+
+        /* --- DASHBOARD UI (Foreground) --- */
+        #dashboard {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none; /* Let clicks pass through to canvas */
+        }
+
+        /* --- CLOCK & GREETING --- */
+        #top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between; /* Space out greeting and clock */
+            align-items: flex-start;
+            pointer-events: none;
+        }
+
+        #greeting {
+            font-size: 24px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            /* Center the greeting absolutely in the top middle */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 30px;
+        }
+
+        #clock {
+            font-family: 'Courier New', Courier, monospace; /* Digital look */
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: auto; /* Push to right */
+        }
+
+        /* --- SEARCH & SHORTCUTS --- */
+        #search-box {
+            pointer-events: auto;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            width: 400px;
+            transition: all 0.3s ease;
+        }
+        #search-box:hover {
+            background: rgba(255, 255, 255, 0.2);
+            width: 420px;
+        }
+        #search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+
+        #shortcuts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .tile {
+            width: 100px;
+            height: 100px;
+            background: rgba(30, 30, 30, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.2s, background 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tile:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 80, 0, 0.2);
+            border-color: rgba(255, 100, 0, 0.5);
+        }
+
+        .tile-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .tile-name {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="glCanvas"></canvas>
+
+    <div id="dashboard">
+        
+        <div id="top-bar">
+            <div id="greeting">Good Morning</div>
+            <div id="clock">00:00:00</div>
+        </div>
+
+        <form action="https://google.com/search" method="GET" id="search-box">
+            <input type="text" name="q" id="search-input" placeholder="Search Google..." autocomplete="off">
+        </form>
+
+        <div id="shortcuts">
+            <a href="https://youtube.com" class="tile">
+                <span class="tile-icon">📺</span>
+                <span class="tile-name">YouTube</span>
+            </a>
+            <a href="https://reddit.com" class="tile">
+                <span class="tile-icon">🤖</span>
+                <span class="tile-name">Reddit</span>
+            </a>
+            <a href="https://gmail.com" class="tile">
+                <span class="tile-icon">📧</span>
+                <span class="tile-name">Gmail</span>
+            </a>
+            <a href="https://github.com" class="tile">
+                <span class="tile-icon">🐙</span>
+                <span class="tile-name">GitHub</span>
+            </a>
+            
+            <a href="https://gemini.google.com" class="tile">
+                <span class="tile-icon">✨</span>
+                <span class="tile-name">Gemini</span>
+            </a>
+
+            <a href="https://amazon.com" class="tile">
+                <span class="tile-icon">📦</span>
+                <span class="tile-name">Amazon</span>
+            </a>
+            <a href="https://twitter.com" class="tile">
+                <span class="tile-icon">🐦</span>
+                <span class="tile-name">X</span>
+            </a>
+            <a href="https://netflix.com" class="tile">
+                <span class="tile-icon">🍿</span>
+                <span class="tile-name">Netflix</span>
+            </a>
+        </div>
+    </div>
+
+<script id="vs" type="x-shader/x-vertex">
+    attribute vec2 a_position;
+    attribute float a_life;
+    attribute float a_size;
+    uniform vec2 u_resolution;
+    varying float v_life;
+    void main() {
+        vec2 zeroToOne = a_position / u_resolution;
+        vec2 zeroToTwo = zeroToOne * 2.0;
+        vec2 clipSpace = zeroToTwo - 1.0;
+        gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+        gl_PointSize = a_size * (a_life / 100.0);
+        v_life = a_life;
+    }
+</script>
+<script id="fs" type="x-shader/x-fragment">
+    precision mediump float;
+    varying float v_life;
+    void main() {
+        vec2 coord = gl_PointCoord - vec2(0.5);
+        float dist = length(coord);
+        if (dist > 0.5) discard;
+        float alpha = 1.0 - (dist * 2.0);
+        alpha = pow(alpha, 1.5);
+        float red = 1.0;
+        float green = (v_life / 100.0) * 0.8;
+        float blue = (v_life / 100.0) * 0.2; 
+        gl_FragColor = vec4(red, green, blue, alpha * (v_life / 100.0));
+    }
+</script>
+
+<script>
+    /* --- TIME & GREETING LOGIC --- */
+    function updateTime() {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+
+        // Greeting Logic
+        const greetingEl = document.getElementById('greeting');
+        let greetingText = "Hello";
+        if (hours >= 5 && hours < 12) greetingText = "Good Morning Keshav";
+        else if (hours >= 12 && hours < 18) greetingText = "Good Afternoon Keshav";
+        else greetingText = "Good Evening Keshav";
+        
+        greetingEl.textContent = greetingText;
+
+        // Clock Logic (24 Hour)
+        const clockEl = document.getElementById('clock');
+        // Pad single digits with zero (e.g., 9 -> 09)
+        const h = hours.toString().padStart(2, '0');
+        const m = minutes.toString().padStart(2, '0');
+        const s = seconds.toString().padStart(2, '0');
+        clockEl.textContent = `${h}:${m}:${s}`;
+    }
+
+    // Update immediately and then every second
+    updateTime();
+    setInterval(updateTime, 1000);
+
+
+    /* --- GPU FIRE LOGIC (Standard) --- */
+    const canvas = document.getElementById('glCanvas');
+    const gl = canvas.getContext('webgl');
+    let width, height;
+    
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        gl.viewport(0, 0, width, height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
+    }
+    const program = gl.createProgram();
+    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, document.getElementById('vs').text));
+    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, document.getElementById('fs').text));
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const positionLoc = gl.getAttribLocation(program, "a_position");
+    const lifeLoc = gl.getAttribLocation(program, "a_life");
+    const sizeLoc = gl.getAttribLocation(program, "a_size");
+    const resolutionLoc = gl.getUniformLocation(program, "u_resolution");
+
+    const PARTICLE_COUNT = 30000;
+    const DATA_STRIDE = 7; 
+    const particlesData = new Float32Array(PARTICLE_COUNT * DATA_STRIDE);
+    const positionBufferData = new Float32Array(PARTICLE_COUNT * 2);
+    const lifeBufferData = new Float32Array(PARTICLE_COUNT);
+    const sizeBufferData = new Float32Array(PARTICLE_COUNT);
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) resetParticle(i, true);
+
+    function resetParticle(i, initial = false) {
+        const index = i * DATA_STRIDE;
+        const spread = 400; 
+        particlesData[index] = (width / 2) + (Math.random() * spread - spread / 2);
+        particlesData[index + 1] = height + Math.random() * 50; 
+        if (initial) {
+            particlesData[index + 1] -= Math.random() * height * 0.6;
+            particlesData[index + 4] = Math.random() * 100;
+        } else {
+            particlesData[index + 4] = 100;
+        }
+        particlesData[index + 2] = (Math.random() * 2 - 1);
+        particlesData[index + 3] = -(Math.random() * 5 + 3);
+        particlesData[index + 5] = Math.random() * 2.0 + 0.5;
+        particlesData[index + 6] = Math.random() * 30 + 10;
+    }
+
+    const posBuffer = gl.createBuffer();
+    const lifeBuffer = gl.createBuffer();
+    const sizeBuffer = gl.createBuffer();
+    const mouse = { x: -1000, y: -1000, vx: 0, vy: 0 };
+    let lastMouse = { x: 0, y: 0 };
+
+    window.addEventListener('mousemove', e => {
+        mouse.vx = e.clientX - lastMouse.x;
+        mouse.vy = e.clientY - lastMouse.y;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        lastMouse.x = e.clientX;
+        lastMouse.y = e.clientY;
+    });
+
+    function animate() {
+        mouse.vx *= 0.1;
+        mouse.vy *= 0.1;
+        
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const idx = i * DATA_STRIDE;
+            let px = particlesData[idx];
+            let py = particlesData[idx + 1];
+            let vx = particlesData[idx + 2];
+            let vy = particlesData[idx + 3];
+            let life = particlesData[idx + 4];
+            
+            const dx = px - mouse.x;
+            const dy = py - mouse.y;
+            const distSq = dx*dx + dy*dy;
+            
+            if (distSq < 22500) { 
+                const dist = Math.sqrt(distSq);
+                const force = (150 - dist) / 150;
+                vx += (mouse.vx * force) * 0.15;
+                vy += (mouse.vy * force) * 0.15;
+            }
+            vx += (Math.random() * 0.5 - 0.25);
+            px += vx;
+            py += vy;
+            life -= particlesData[idx + 5];
+
+            particlesData[idx] = px;
+            particlesData[idx + 1] = py;
+            particlesData[idx + 2] = vx;
+            particlesData[idx + 3] = vy;
+            particlesData[idx + 4] = life;
+
+            positionBufferData[i * 2] = px;
+            positionBufferData[i * 2 + 1] = py;
+            lifeBufferData[i] = life;
+            sizeBufferData[i] = particlesData[idx + 6];
+
+            if (life <= 0) resetParticle(i);
+        }
+
+        gl.viewport(0, 0, width, height);
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        gl.useProgram(program);
+        gl.uniform2f(resolutionLoc, width, height);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, positionBufferData, gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(positionLoc);
+        gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, lifeBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, lifeBufferData, gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(lifeLoc);
+        gl.vertexAttribPointer(lifeLoc, 1, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, sizeBufferData, gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(sizeLoc);
+        gl.vertexAttribPointer(sizeLoc, 1, gl.FLOAT, false, 0, 0);
+
+        gl.drawArrays(gl.POINTS, 0, PARTICLE_COUNT);
+        requestAnimationFrame(animate);
+    }
+    animate();
+</script>
+</body>
+</html>
