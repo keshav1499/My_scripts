@@ -180,11 +180,11 @@
                 <span class="tile-name">Gemini</span>
             </a>
 
-            <a href="https://amazon.com" class="tile">
+            <a href="https://amazon.in" class="tile">
                 <span class="tile-icon">📦</span>
                 <span class="tile-name">Amazon</span>
             </a>
-            <a href="https://twitter.com" class="tile">
+            <a href="https://x.com" class="tile">
                 <span class="tile-icon">🐦</span>
                 <span class="tile-name">X</span>
             </a>
@@ -287,7 +287,7 @@
     const sizeLoc = gl.getAttribLocation(program, "a_size");
     const resolutionLoc = gl.getUniformLocation(program, "u_resolution");
 
-    const PARTICLE_COUNT = 30000;
+    const PARTICLE_COUNT = 15000;
     const DATA_STRIDE = 7; 
     const particlesData = new Float32Array(PARTICLE_COUNT * DATA_STRIDE);
     const positionBufferData = new Float32Array(PARTICLE_COUNT * 2);
@@ -300,7 +300,7 @@
         const index = i * DATA_STRIDE;
         const spread = 300; 
         //particlesData[index] = (width / 5) + (Math.random() * spread - spread / 2);
-        
+        //We render the fire using 1/5th and 4/5th of viewport x axis as centres
         if (Math.random() < 0.5) {
           particlesData[index] = (width / 5) + (Math.random() * spread - spread / 2);
         } else {
